@@ -1,0 +1,1035 @@
+<!doctype html>
+<html lang="en" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Valentine's Week Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    /* ===== MOBILE RESPONSIVE BASE ===== */
+    * { box-sizing: border-box; }
+    html, body, #app { height: 100%; width: 100%; overflow-x: hidden; }
+    body { 
+      box-sizing: border-box;
+      -webkit-text-size-adjust: 100%;
+      overflow-x: hidden;
+      max-width: 100vw;
+    }
+    
+    /* Make all images responsive */
+    img { max-width: 100%; height: auto; }
+    
+    .font-pacifico { font-family: 'Pacifico', cursive; }
+    .font-nunito { font-family: 'Nunito', sans-serif; }
+    
+    @keyframes float { 
+      0%, 100% { transform: translateY(0px) rotate(-2deg); } 
+      50% { transform: translateY(-15px) rotate(2deg); }
+    }
+    @keyframes pulse-heart { 
+      0%, 100% { transform: scale(1); } 
+      50% { transform: scale(1.2); }
+    }
+    @keyframes zoom-gift { 
+      0% { transform: scale(0.2); opacity: 0; } 
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes confetti-fall { 
+      0% { transform: translateY(-100%) rotate(0deg); opacity: 1; } 
+      100% { transform: translateY(100%) rotate(720deg); opacity: 0; }
+    }
+    @keyframes shake { 
+      0%, 100% { transform: translateX(0); } 
+      25% { transform: translateX(-5px) rotate(-5deg); }
+      75% { transform: translateX(5px) rotate(5deg); }
+    }
+    @keyframes bounce-in { 
+      0% { transform: scale(0); opacity: 0; } 
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes wiggle { 
+      0%, 100% { transform: rotate(-3deg); } 
+      50% { transform: rotate(3deg); }
+    }
+    @keyframes fade-in { 
+      from { opacity: 0; } 
+      to { opacity: 1; }
+    }
+    @keyframes zoom-in-large { 
+      0% { transform: scale(0.5); opacity: 0; } 
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    
+    .fade-in { animation: fade-in 0.5s ease-out; }
+    .zoom-in-large { animation: zoom-in-large 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .pulse-heart { animation: pulse-heart 1s ease-in-out infinite; }
+    .shake { animation: shake 0.5s ease-in-out; }
+    .bounce-in { animation: bounce-in 0.5s ease-out forwards; }
+    .wiggle { animation: wiggle 0.3s ease-in-out infinite; }
+    .zoom-gift { animation: zoom-gift 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+    .slide-in { animation: slide-in 0.5s ease-out; }
+    
+    .runaway-btn { transition: none; position: absolute; }
+    .heart-bg { position: absolute; opacity: 0.1; pointer-events: none; }
+    .confetti { position: fixed; width: 10px; height: 10px; animation: confetti-fall 3s linear forwards; pointer-events: none; }
+    
+    .day-badge { display: inline-block; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; margin-bottom: 16px; }
+    .rose-day { background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); color: #c2185b; }
+    .propose-day { background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); color: #7b1fa2; }
+    .chocolate-day { background: linear-gradient(135deg, #efebe9 0%, #d7ccc8 100%); color: #5d4037; }
+    .teddy-day { background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); color: #e65100; }
+    .promise-day { background: linear-gradient(135deg, #e0f2f1 0%, #b2dfdb 100%); color: #00695c; }
+
+    /* ===== CAROUSEL RESPONSIVE ===== */
+    #carousel-slides {
+      height: min(60vh, 400px);
+    }
+
+    .carousel-slide {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .carousel-slide > div {
+      width: 100%;
+      max-width: 420px;
+      height: min(60vw, 400px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff0f6;
+      border-radius: 24px;
+      overflow: hidden;
+    }
+
+    .carousel-image {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    /* Tenor GIF Card Styling */
+    .tenor-card {
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto 1rem;
+      padding: 14px;
+      background: linear-gradient(135deg, #ffffff 0%, #fff0f6 100%);
+      border-radius: 24px;
+      box-shadow:
+        0 12px 30px rgba(236, 72, 153, 0.25),
+        inset 0 0 0 2px rgba(236, 72, 153, 0.15);
+      overflow: hidden;
+      animation: pop-in 0.6s ease-out;
+    }
+
+    .tenor-card iframe {
+      border-radius: 18px;
+    }
+
+    @keyframes zoomInFull {
+      0% {
+        transform: scale(0.7);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .animate-zoomIn {
+      animation: zoomInFull 0.6s ease-out forwards;
+    }
+
+    @keyframes pop-in {
+      0% {
+        transform: scale(0.85) translateY(10px);
+        opacity: 0;
+      }
+      60% {
+        transform: scale(1.05);
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    @media (hover: hover) {
+      .carousel-slide.active:hover {
+        transform: rotateY(-6deg) rotateX(3deg) scale(1.02);
+      }
+    }
+
+    .carousel-3d {
+      perspective: 1200px;
+    }
+
+    .carousel-card {
+      transform-style: preserve-3d;
+      transition: transform 0.8s ease, opacity 0.8s ease;
+    }
+
+    .carousel-card.enter {
+      transform: rotateY(90deg) scale(0.8);
+      opacity: 0;
+    }
+
+    .carousel-card.active {
+      transform: rotateY(0deg) scale(1);
+      opacity: 1;
+    }
+
+    .carousel-card.exit {
+      transform: rotateY(-90deg) scale(0.8);
+      opacity: 0;
+    }
+
+    .carousel-slide.active { display: flex; }
+
+    /* ===== FULLSCREEN HUG IMAGE ===== */
+    #hug-overlay {
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .hug-fullscreen {
+      height: 100vh;
+      width: auto;
+      max-width: 100vw;
+      object-fit: contain;
+    }
+
+    /* ===== MOBILE RESPONSIVE STYLES ===== */
+    @media (max-width: 768px) {
+      /* Reduce font sizes on mobile */
+      .font-pacifico { font-size: clamp(1.5rem, 8vw, 3rem) !important; }
+      
+      h1 { font-size: clamp(1.8rem, 7vw, 3rem) !important; }
+      h2 { font-size: clamp(1.2rem, 5vw, 2rem) !important; }
+      p { font-size: clamp(0.9rem, 3.5vw, 1.125rem) !important; }
+      
+      /* Emoji sizes */
+      .text-8xl { font-size: 4rem !important; }
+      .text-7xl { font-size: 3.5rem !important; }
+      .text-6xl { font-size: 3rem !important; }
+      .text-5xl { font-size: 2.5rem !important; }
+      .text-9xl { font-size: 5rem !important; }
+      
+      /* Button sizes */
+      button {
+        padding: 12px 24px !important;
+        font-size: 1rem !important;
+      }
+      
+      /* Container padding */
+      .max-w-lg, .max-w-2xl, .max-w-3xl {
+        max-width: 100% !important;
+        padding: 0 1rem !important;
+      }
+      
+      /* Card padding */
+      .bg-white\/95 {
+        padding: 1.5rem !important;
+      }
+      
+      /* Progress gifts smaller */
+      #progress-gifts span {
+        font-size: 1.5rem !important;
+      }
+      
+      /* Options container spacing */
+      #options-container {
+        gap: 0.75rem !important;
+      }
+      
+      #options-container button {
+        padding: 1rem !important;
+        font-size: 0.95rem !important;
+      }
+      
+      /* Carousel adjustments */
+      #carousel-slides {
+        height: 50vh !important;
+      }
+      
+      .carousel-slide > div {
+        height: 45vh !important;
+        max-width: 90vw !important;
+      }
+      
+      /* Tenor card mobile */
+      .tenor-card {
+        max-width: 100% !important;
+        padding: 10px !important;
+      }
+      
+      .tenor-card img {
+        max-height: 200px !important;
+      }
+      
+      /* Success screen emojis */
+      .bounce-in {
+        font-size: 3rem !important;
+      }
+      
+      /* Valentine question buttons */
+      #yes-btn, #no-btn {
+        padding: 14px 32px !important;
+        font-size: 1.2rem !important;
+      }
+      
+      /* Hug button */
+      #hug-btn {
+        padding: 14px 40px !important;
+        font-size: 1.1rem !important;
+        width: 100% !important;
+        max-width: 300px !important;
+      }
+      
+      /* Day badge */
+      .day-badge {
+        font-size: 0.875rem !important;
+        padding: 6px 12px !important;
+      }
+      
+      /* Gift display area */
+      #gift-display-area {
+        margin-top: 2rem !important;
+      }
+      
+      #gift-emoji {
+        font-size: 5rem !important;
+      }
+      
+      /* Floating hearts smaller on mobile */
+      .heart-bg {
+        font-size: 1.5rem !important;
+      }
+      
+      /* Start screen adjustments */
+      #start-screen .text-8xl {
+        font-size: 4rem !important;
+      }
+      
+      #start-screen h1 {
+        font-size: 2.5rem !important;
+      }
+      
+      #start-screen h2 {
+        font-size: 1.5rem !important;
+      }
+      
+      #start-screen .text-6xl {
+        font-size: 2.5rem !important;
+      }
+      
+      /* Promise template mobile */
+      #promise-template p {
+        font-size: 0.95rem !important;
+        padding: 0 0.5rem !important;
+      }
+      
+      #promise-next-btn {
+        width: 100% !important;
+        max-width: 300px !important;
+      }
+      
+      /* Reduce vertical spacing */
+      .mb-8 { margin-bottom: 1.5rem !important; }
+      .mb-6 { margin-bottom: 1rem !important; }
+      .mb-4 { margin-bottom: 0.75rem !important; }
+      
+      /* Touch-friendly spacing for buttons */
+      .gap-6 { gap: 1rem !important; }
+      
+      /* Prevent text overflow */
+      * {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+      }
+    }
+    
+    /* Extra small screens */
+    @media (max-width: 375px) {
+      .font-pacifico { font-size: 1.5rem !important; }
+      h1 { font-size: 1.75rem !important; }
+      h2 { font-size: 1.25rem !important; }
+      
+      button {
+        padding: 10px 20px !important;
+        font-size: 0.95rem !important;
+      }
+      
+      .bg-white\/95 {
+        padding: 1rem !important;
+      }
+      
+      #carousel-slides {
+        height: 40vh !important;
+      }
+    }
+  </style>
+  <style>@view-transition { navigation: auto; } </style>
+  
+ </head>
+ <body class="h-full font-nunito overflow-auto">
+  <div id="app" class="h-full w-full relative overflow-hidden" style="background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 50%, #f48fb1 100%);">
+   <div id="hearts-bg" class="absolute inset-0 pointer-events-none overflow-hidden"></div>
+   <div class="relative z-10 h-full flex flex-col items-center justify-center p-4 overflow-auto">
+    <!-- Start Screen -->
+    <div id="start-screen" class="text-center max-w-lg w-full px-4">
+     <div class="text-8xl mb-4 float-animation">💘</div>
+     <h1 class="font-pacifico text-5xl text-pink-700 mb-2">Valentine's Week</h1>
+     <h2 class="font-pacifico text-3xl text-pink-600 mb-4">Quest of Love!</h2>
+     <p class="text-pink-600 text-lg mb-2">Hey <span id="partner-display" class="font-bold">Sweetheart</span>! 💕</p>
+     <p class="text-pink-500 mb-8">Complete the Valentine's Week challenges to prove your love!</p>
+     <div class="text-6xl mb-6 flex justify-center gap-3 flex-wrap">
+       <span>🌹</span><span>💍</span><span>🍫</span><span>🧸</span><span>📜</span>
+     </div>
+     <button id="start-btn" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-4 px-10 rounded-full text-xl shadow-lg transform hover:scale-105 transition-all duration-300">Start Quest! 😁✨</button>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden text-center max-w-3xl w-full px-4">
+     <div class="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8">
+      <div id="day-badge" class="day-badge rose-day mb-4"></div>
+      <div class="flex justify-between items-center mb-6">
+        <span class="text-pink-400 font-bold">Day <span id="q-num">1</span>/5</span>
+        <div class="flex gap-2" id="progress-gifts"></div>
+      </div>
+      <div id="question-emoji" class="text-7xl mb-4 bounce-in"></div>
+      <h2 id="question-text" class="font-bold text-2xl text-pink-700 mb-8"></h2>
+      <div id="options-container" class="space-y-3 mb-6"></div>
+      <div id="gift-display-area" class="hidden mt-8 text-center">
+       <div id="gift-emoji" class="text-9xl zoom-gift mb-4"></div>
+       <p class="text-pink-600 font-bold text-lg">Correct! 🎉</p>
+      </div>
+
+      <template id="promise-template">
+        <div class="flex flex-col items-center text-center">
+          <div class="tenor-card">
+            <img 
+              src="photos/photo6.jpeg" 
+              alt="Our Promise"
+              class="w-full max-h-64 object-contain rounded-2xl bg-pink-50"
+            />
+          </div>
+
+          <h1 class="font-pacifico text-3xl text-pink-500 drop-shadow mb-2">My Valentine Promise</h1>
+          <div class="text-2xl mb-2">💝</div>
+          <p class="text-gray-600 font-semibold leading-relaxed text-base max-w-md px-2">
+            I promise to care for you,<br />
+            to make you smile even on hard days,<br />
+            and to love you more with every heartbeat ❤️
+          </p>
+
+          <button
+            id="promise-next-btn"
+            class="mt-6 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white px-8 py-3 rounded-full font-bold shadow-lg transform hover:scale-105 transition-all"
+          >
+            Final Surprise 🎁
+          </button>
+        </div>
+      </template>
+     </div>
+    </div>
+
+    <!-- Carousel Screen -->
+    <div id="carousel-screen" class="hidden text-center max-w-2xl w-full px-4">
+     <div class="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8">
+      <h2 class="font-pacifico text-3xl text-pink-600 mb-6">Our Cute Moments 💕</h2>
+      <div class="relative bg-gradient-to-b from-pink-100 to-pink-50 rounded-2xl p-8 mb-8 min-h-80 flex items-center justify-center overflow-hidden">
+       <div id="carousel-slides" class="relative w-full"></div>
+      </div>
+      <div class="text-pink-500 font-bold mb-6">
+       Slide <span id="slide-counter">1</span> / <span id="total-slides">6</span>
+      </div>
+      <button id="hug-btn" class="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-4 px-12 rounded-full text-xl shadow-lg transform hover:scale-105 transition-all duration-400">One Hug? 🤗</button>
+     </div>
+    </div>
+
+    <!-- Valentine Question Screen -->
+    <div id="valentine-screen" class="hidden text-center max-w-2xl w-full px-4">
+     <div class="bg-white/95 backdrop-blur rounded-3xl shadow-2xl p-8 relative overflow-visible">
+      <div class="text-5xl sm:text-8xl mb-4 pulse-heart">💖</div>
+      <h2 class="font-pacifico text-4xl text-pink-600 mb-2">The Final Moment... </h2>
+      <p class="text-pink-500 text-xl mb-8"><span id="valentine-name">Sweetheart</span>,</p>
+      <h1 class="font-pacifico text-3xl sm:text-5xl text-red-500 mb-10">Will You Be My Valentine?</h1>
+      <div class="flex flex-wrap justify-center gap-4 relative min-h-[80px]">
+        <button id="yes-btn" class="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-12 rounded-full text-2xl shadow-lg transform hover:scale-110 transition-all duration-300 z-10">YES! 💕</button> 
+        <button id="no-btn" class="runaway-btn bg-gray-400 text-white font-bold py-4 px-12 rounded-full text-2xl shadow-lg">No 😢</button>
+      </div>
+      <p id="hint-text" class="text-pink-400 text-sm mt-6 opacity-0 transition-opacity duration-300">Think carefully 😏</p>
+     </div>
+    </div>
+
+    <!-- Success Screen -->
+    <div id="success-screen" class="hidden text-center max-w-lg w-full px-4">
+     <div class="bounce-in">
+      <div class="sm:text-9xl text-6xl mb-4">🥰</div>
+      <h1 class="font-pacifico text-5xl text-pink-600 mb-4">Yay!</h1>
+      <p class="text-3xl text-pink-500 mb-6" id="success-message">We're Valentines Forever! I knew you'd say YES 💘</p>
+      <div class="flex justify-center gap-4 mb-6 flex-wrap">
+       <div class="text-6xl bounce-in" style="animation-delay: 0s">🌹</div>
+       <div class="text-6xl bounce-in" style="animation-delay: 0.1s">💍</div>
+       <div class="text-6xl bounce-in" style="animation-delay: 0.2s">🍫</div>
+       <div class="text-6xl bounce-in" style="animation-delay: 0.3s">🧸</div>
+       <div class="text-6xl bounce-in" style="animation-delay: 0.4s">📜</div>
+      </div>
+      <p class="text-pink-400 mb-6">You completed the Valentine's Week Quest! 💕</p>
+      <button id="replay-btn" class="bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white font-bold py-3 px-8 rounded-full shadow-lg transform hover:scale-105 transition-all">Play Again 🔄</button>
+     </div>
+    </div>
+   </div>
+  </div>
+
+  <div id="hug-overlay" class="fixed inset-0 hidden z-50 bg-black flex items-center justify-center">
+    <img 
+      id="hug-image"
+      src="photos/photo5.jpeg"
+      class="hug-fullscreen animate-zoomIn"
+    />
+  </div>
+
+  <script>
+    const defaultConfig = {
+      partner_name: "Sweetheart",
+      final_message: "We're Valentines Forever! 💘",
+      primary_color: "#ec4899",
+      secondary_color: "#ffffff",
+      text_color: "#be185d",
+      button_color: "#ec4899",
+      accent_color: "#22c55e"
+    };
+    
+    let config = { ...defaultConfig };
+    
+    const carouselSlides = [
+      { img: "photos/photo1.jpeg", caption: "Love Me ❤️" },
+      { img: "photos/photo2.jpeg", caption: "Cute Moments 💕" },
+      { img: "photos/photo3.jpeg", caption: "Just Us 🥰" },
+      { img: "photos/photo4.jpeg", caption: "Forever Us 💖" },
+      { img: "photos/photo5.jpeg", caption: "Royal Love 👑" },
+      { img: "photos/photo7.jpeg", caption: "Cute Chaos 😄" }
+    ];
+    
+    const valentineWeek = [
+      {
+        day: "Rose Day",
+        dayClass: "rose-day",
+        emoji: "🌹",
+        gift: "🌹",
+        question: "What does a red rose symbolize?",
+        options: [
+          { text: "Love and passion ❤️", correct: true },
+          { text: "Friendship and joy 😊", correct: false, reaction: "That's more of a yellow rose thing! 💛" },
+          { text: "Apology and regret 😔", correct: false, reaction: "Close! But that's typically what we say, not roses. 🤔" },
+          { text: "Jealousy and envy 😠", correct: false, reaction: "Ouch! Nobody gives roses for that! 😅" }
+        ]
+      },
+      {
+        day: "Propose Day",
+        dayClass: "propose-day",
+        emoji: "💍",
+        gift: "💍",
+        question: "What should I do on Propose Day?",
+        options: [
+          { text: "Confess my love and ask you to be mine 💕", correct: true },
+          { text: "Buy you expensive gifts 💰", correct: false, reaction: "Nice try! But love > money! 😊" },
+          { text: "Plan a surprise party 🎉", correct: false, reaction: "Fun idea, but that's not what Propose Day is about! 🎭" },
+          { text: "Just say hello like normal 👋", correct: false, reaction: "Boring! This is THE day to be romantic! 😱" }
+        ]
+      },
+      {
+        day: "Chocolate Day",
+        dayClass: "chocolate-day",
+        emoji: "🍫",
+        gift: "🍫",
+        question: "Why do I love you?",
+        options: [
+          { text: "Your beautiful smile 😍", correct: false, reaction: "Yes, but that's not the only reason! 🤭" },
+          { text: "Your kindness and care 👩‍❤️‍💋‍👨", correct: false, reaction: "Definitely part of it! 💕" },
+          { text: "You're my safe place 🏠", correct: false, reaction: "Absolutely! And more... 🥰" },
+          { text: "All of the above ❤️", correct: true }
+        ]
+      },
+      {
+        day: "Teddy Day",
+        dayClass: "teddy-day",
+        emoji: "🧸",
+        gift: "🧸",
+        question: "Why is Teddy Day special?",
+        options: [
+          { text: "It's a day for cuddling and comfort 🤗", correct: true },
+          { text: "Teddy bears were invented today 🤷", correct: false, reaction: "Nope! But teddy bears ARE awesome! 🧸" },
+          { text: "Everyone must wear teddy bear costume 🧸", correct: false, reaction: "That would be funny though! 😄" },
+          { text: "It's just a random day 😐", correct: false, reaction: "It's much more special than that! 💕" }
+        ]
+      },
+      {
+        day: "Promise Day",
+        dayClass: "promise-day",
+        emoji: "📜",
+        gift: "📜",
+        question: "My Valentine Promise?",
+        options: [
+          { text: "I promise to care for you, to make you smile even on hard days,and to love and cherish you forever 💕", correct: true }
+        ]
+      }
+    ];
+    
+    let currentDay = 0;
+    let currentSlide = 0;
+    let noButtonEscapes = 0;
+    
+    const startScreen = document.getElementById('start-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const carouselScreen = document.getElementById('carousel-screen');
+    const valentineScreen = document.getElementById('valentine-screen');
+    const successScreen = document.getElementById('success-screen');
+    const partnerDisplay = document.getElementById('partner-display');
+    const valentineName = document.getElementById('valentine-name');
+    const questionText = document.getElementById('question-text');
+    const questionEmoji = document.getElementById('question-emoji');
+    const optionsContainer = document.getElementById('options-container');
+    const progressGifts = document.getElementById('progress-gifts');
+    const qNum = document.getElementById('q-num');
+    const noBtn = document.getElementById('no-btn');
+    const yesBtn = document.getElementById('yes-btn');
+    const hintText = document.getElementById('hint-text');
+    const successMessage = document.getElementById('success-message');
+    const heartsBg = document.getElementById('hearts-bg');
+    const dayBadge = document.getElementById('day-badge');
+    const giftDisplayArea = document.getElementById('gift-display-area');
+    const giftEmoji = document.getElementById('gift-emoji');
+    const carouselSlidesContainer = document.getElementById('carousel-slides');
+    const slideCounter = document.getElementById('slide-counter');
+    const hugBtn = document.getElementById('hug-btn');
+    
+    function createFloatingHearts() {
+      heartsBg.innerHTML = '';
+      const hearts = ['💕', '💖', '💗', '💓', '💘', '❤️','💝', '❤️‍🔥'];
+      for (let i = 0; i < 15; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart-bg float-animation';
+        heart.style.left = Math.random() * 100 + '%';
+        heart.style.top = Math.random() * 100 + '%';
+        heart.style.fontSize = (Math.random() * 40 + 20) + 'px';
+        heart.style.animationDelay = (Math.random() * 3) + 's';
+        heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+        heartsBg.appendChild(heart);
+      }
+    }
+    
+    function initProgressGifts() {
+      progressGifts.innerHTML = '';
+      for (let i = 0; i < valentineWeek.length; i++) {
+        const gift = document.createElement('span');
+        gift.className = 'text-3xl transition-all duration-300';
+        gift.textContent = i < currentDay ? valentineWeek[i].gift : '⭐';
+        progressGifts.appendChild(gift);
+      }
+    }
+    
+    function showScreen(screen) {
+      [startScreen, quizScreen, carouselScreen, valentineScreen, successScreen].forEach(s => s.classList.add('hidden'));
+      screen.classList.remove('hidden');
+    }
+    
+    function loadQuestion() {
+      const day = valentineWeek[currentDay];
+      qNum.textContent = currentDay + 1;
+      dayBadge.className = 'day-badge ' + day.dayClass + ' mb-4';
+      dayBadge.textContent = day.day;
+      questionEmoji.textContent = day.emoji;
+      questionEmoji.classList.add('bounce-in');
+      questionText.textContent = day.question;
+      giftDisplayArea.classList.add('hidden');
+      optionsContainer.innerHTML = '';
+      
+      if (day.day === "Promise Day") {
+        const tpl = document.getElementById("promise-template");
+        const clone = tpl.content.cloneNode(true);
+        questionText.textContent = "";
+        questionEmoji.textContent = "";
+        optionsContainer.appendChild(clone);
+        initProgressGifts();
+        
+        setTimeout(() => {
+          const btn = document.getElementById("promise-next-btn");
+          if (btn) {
+            btn.addEventListener("click", () => {
+              currentDay++;
+              showCarousel();
+            });
+          }
+        }, 0);
+        return;
+      }
+
+      const shuffled = [...day.options].sort(() => Math.random() - 0.5);
+      
+      shuffled.forEach((opt, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'w-full py-4 px-6 rounded-2xl text-left font-semibold transition-all duration-300 transform hover:scale-102'
+        btn.style.background = config.secondary_color;
+        btn.style.color = config.text_color;
+        btn.style.border = '2px solid ' + config.primary_color + '40';
+        btn.innerHTML = opt.text;
+        
+        btn.addEventListener('mouseenter', () => {
+          btn.style.background = config.primary_color + '20';
+          btn.style.borderColor = config.primary_color;
+        });
+        
+        btn.addEventListener('mouseleave', () => {
+          btn.style.background = config.secondary_color;
+          btn.style.borderColor = config.primary_color + '40';
+        });
+        
+        btn.addEventListener('click', () => handleAnswer(opt, btn, day));
+        btn.style.animationDelay = (idx * 0.1) + 's';
+        btn.classList.add('bounce-in');
+        optionsContainer.appendChild(btn);
+      });
+      
+      initProgressGifts();
+    }
+    
+    function handleAnswer(option, btn, day) {
+      if (option.correct) {
+        btn.style.background = '#22c55e';
+        btn.style.color = 'white';
+        btn.innerHTML += ' ✓';
+        btn.disabled = true;
+        giftEmoji.textContent = day.gift;
+        giftDisplayArea.classList.remove('hidden');
+        
+        setTimeout(() => {
+          currentDay++;
+          if (currentDay < valentineWeek.length) {
+            loadQuestion();
+          } else {
+            showCarousel();
+          }
+        }, 1500);
+      } else {
+        btn.classList.add('shake');
+        btn.style.background = '#ef4444';
+        btn.style.color = 'white';
+        btn.disabled = true;
+        
+        const reaction = document.createElement('div');
+        reaction.className = 'fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-6 shadow-2xl z-50 bounce-in text-center max-w-sm';
+        reaction.innerHTML = `
+          <div class="text-5xl mb-3">😅</div>
+          <p class="text-pink-600 font-bold text-lg">${option.reaction}</p>
+          <button class="mt-4 bg-pink-500 text-white py-2 px-6 rounded-full font-bold hover:bg-pink-600">Got it! 💭</button>
+        `;
+        document.body.appendChild(reaction);
+        
+        reaction.querySelector('button').addEventListener('click', () => {
+          reaction.remove();
+          btn.classList.remove('shake');
+          btn.style.background = config.secondary_color;
+          btn.style.color = config.text_color;
+          btn.disabled = false;
+        });
+      }
+    }
+    
+    let autoplayInterval;
+    let isDragging = false;
+    let startX = 0;
+    let currentTranslate = 0;
+
+    function showCarousel() {
+      showScreen(carouselScreen);
+      currentSlide = 0;
+      buildCarousel();
+      startAutoplay();
+    }
+
+    function buildCarousel() {
+      carouselSlidesContainer.innerHTML = "";
+
+      carouselSlides.forEach((slide, index) => {
+        const slideEl = document.createElement("div");
+        slideEl.className ="carousel-slide absolute flex flex-col items-center justify-center w-full h-full p-4 transition-all duration-700";
+
+        slideEl.innerHTML = `<div class="w-full max-w-md rounded-2xl overflow-hidden shadow-2xl bg-white">
+          <img src="${slide.img}" 
+            class="carousel-image rounded-2xl"
+            onerror="this.style.border='4px solid red'; console.log('Image failed:', this.src)" />
+        </div>
+        <p class="mt-4 text-xl text-pink-600 font-bold text-center">${slide.caption}</p>`;
+
+        carouselSlidesContainer.appendChild(slideEl);
+      });
+
+      updateCarousel();
+    }
+
+    function updateCarousel() {
+      const slides = document.querySelectorAll(".carousel-slide");
+
+      slides.forEach((slide, index) => {
+        let offset = index - currentSlide;
+
+        if (offset > carouselSlides.length / 2) offset -= carouselSlides.length;
+        if (offset < -carouselSlides.length / 2) offset += carouselSlides.length;
+
+        const abs = Math.abs(offset);
+
+        slide.style.transition = "transform 0.9s cubic-bezier(0.34,1.56,0.64,1), opacity 0.6s ease";
+
+        if (offset === 0) {
+          slide.style.transform = `translateX(0px) scale(1) rotateY(0deg)`;
+          slide.style.opacity = "1";
+          slide.style.zIndex = "10";
+        } else {
+          slide.style.transform = `translateX(${offset * 260}px) scale(${1 - abs * 0.15}) rotateY(${offset * -40}deg)`;
+          slide.style.opacity = abs > 3 ? "0" : "0.6";
+          slide.style.zIndex = 10 - abs;
+        }
+      });
+
+      slideCounter.textContent = currentSlide + 1;
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % carouselSlides.length;
+      updateCarousel();
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + carouselSlides.length) % carouselSlides.length;
+      updateCarousel();
+    }
+
+    function startAutoplay() {
+      stopAutoplay();
+      autoplayInterval = setInterval(() => {
+        nextSlide();
+      }, 2000);
+    }
+
+    function stopAutoplay() {
+      if (autoplayInterval) clearInterval(autoplayInterval);
+    }
+
+    carouselSlidesContainer.addEventListener("touchstart", (e) => {
+      startX = e.touches[0].clientX;
+      stopAutoplay();
+    });
+
+    carouselSlidesContainer.addEventListener("touchend", (e) => {
+      const diff = e.changedTouches[0].clientX - startX;
+      if (diff > 50) prevSlide();
+      if (diff < -50) nextSlide();
+      startAutoplay();
+    });
+
+    carouselSlidesContainer.addEventListener("mousedown", (e) => {
+      isDragging = true;
+      startX = e.clientX;
+      stopAutoplay();
+    });
+
+    carouselSlidesContainer.addEventListener("mouseup", (e) => {
+      if (!isDragging) return;
+      const diff = e.clientX - startX;
+      if (diff > 50) prevSlide();
+      if (diff < -50) nextSlide();
+      isDragging = false;
+      startAutoplay();
+    });
+
+    const hugOverlay = document.getElementById("hug-overlay");
+
+    hugBtn.addEventListener("click", () => {
+      stopAutoplay();
+      hugOverlay.classList.remove("hidden");
+      setTimeout(() => {
+        hugOverlay.classList.add("hidden");
+        showValentineQuestion();
+      }, 2500);
+    });
+    
+    function showValentineQuestion() {
+      showScreen(valentineScreen);
+      valentineName.textContent = config.partner_name;
+      resetNoButton();
+      noButtonEscapes = 0;
+      hintText.style.opacity = '0';
+    }
+    
+    function resetNoButton() {
+      noBtn.style.position = 'relative';
+      noBtn.style.left = '0';
+      noBtn.style.top = '0';
+    }
+    
+    function setupRunawayButton() {
+      const container = valentineScreen.querySelector('.bg-white\\/95');
+      
+      noBtn.addEventListener('mouseenter', (e) => {
+        noButtonEscapes++;
+        if (noButtonEscapes === 1) hintText.style.opacity = '1';
+        
+        const hints = [
+          "Hmm... that button seems shy! 🙈",
+          "It really doesn't want to be clicked! 😬",
+          "Think carefully 😏",
+          "The No button has left the chat! 🏃💨",
+          "RESISTANCE IS FUTILE! 😈💕"
+        ];
+        hintText.textContent = hints[Math.min(noButtonEscapes - 1, hints.length - 1)];
+        
+        if (noButtonEscapes > 3) {
+          noBtn.style.transform = `scale(${Math.max(0.5, 1 - noButtonEscapes * 0.1)})`;
+        }
+        
+        const containerRect = container.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+        const maxX = containerRect.width - btnRect.width - 40;
+        const maxY = containerRect.height - btnRect.height - 40;
+        
+        let newX = Math.random() * maxX - maxX/2;
+        let newY = Math.random() * maxY - maxY/2;
+        
+        noBtn.style.position = 'absolute';
+        noBtn.style.left = `calc(50% + ${newX}px)`;
+        noBtn.style.top = `calc(50% + ${newY}px)`;
+        noBtn.classList.add('wiggle');
+        
+        setTimeout(() => noBtn.classList.remove('wiggle'), 300);
+        
+        if (noButtonEscapes > 7) {
+          noBtn.textContent = "Not happening... 💀";
+          noBtn.style.opacity = '0.5';
+        }
+      });
+      
+      noBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        noBtn.textContent = "Nice try! 😏";
+        setTimeout(() => { noBtn.textContent = "No 😢"; }, 1000);
+      });
+    }
+    
+    function createConfetti() {
+      const colors = ['#ec4899', '#f472b6', '#22c55e', '#fbbf24', '#ef4444', '#8b5cf6'];
+      const shapes = ['💕', '💖', '💗', '✨', '🎉', '💘', '🌹', '💍', '🍫', '🧸', '📜'];
+      
+      for (let i = 0; i < 50; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.style.left = Math.random() * 100 + '%';
+        confetti.style.animationDelay = Math.random() * 2 + 's';
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        
+        if (Math.random() > 0.5) {
+          confetti.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+          confetti.style.fontSize = (Math.random() * 20 + 15) + 'px';
+        } else {
+          confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+          confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        }
+        
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 5000);
+      }
+    }
+    
+    function showSuccess() {
+      showScreen(successScreen);
+      successMessage.textContent = config.final_message;
+      createConfetti();
+      
+      const confettiInterval = setInterval(createConfetti, 3000);
+      
+      document.getElementById('replay-btn').addEventListener('click', () => {
+        clearInterval(confettiInterval);
+        currentDay = 0;
+        currentSlide = 0;
+        noButtonEscapes = 0;
+        resetNoButton();
+        noBtn.textContent = "No 😢";
+        noBtn.style.transform = 'scale(1)';
+        noBtn.style.opacity = '1';
+        showScreen(startScreen);
+      });
+    }
+    
+    document.getElementById('start-btn').addEventListener('click', () => {
+      currentDay = 0;
+      showScreen(quizScreen);
+      loadQuestion();
+    });
+    
+    yesBtn.addEventListener('click', () => { showSuccess(); });
+    
+    setupRunawayButton();
+    
+    function applyConfig() {
+      partnerDisplay.textContent = config.partner_name;
+      valentineName.textContent = config.partner_name;
+      successMessage.textContent = config.final_message;
+    }
+    
+    async function onConfigChange(newConfig) {
+      config = { ...defaultConfig, ...newConfig };
+      applyConfig();
+    }
+    
+     function mapToCapabilities(cfg) {
+  return {
+    recolorables: [
+      {
+        get: () => cfg.primary_color || defaultConfig.primary_color,
+        set: (v) => { cfg.primary_color = v; } 
+      },
+      {
+        get: () => cfg.secondary_color || defaultConfig.secondary_color,
+        set: (v) => { cfg.secondary_color = v; }
+      },
+      {
+        get: () => cfg.text_color || defaultConfig.text_color,
+        set: (v) => { cfg.text_color = v; }
+      },
+      {
+        get: () => cfg.button_color || defaultConfig.button_color,
+        set: (v) => { cfg.button_color = v; }
+      },
+      {
+        get: () => cfg.accent_color || defaultConfig.accent_color,
+        set: (v) => { cfg.accent_color = v; }
+      }
+    ],
+    borderables: [],
+    fontEditable: undefined,
+    fontSizeable: undefined
+  };
+}
+    
+    function mapToEditPanelValues(cfg) {
+      return new Map([
+        ["partner_name", cfg.partner_name || defaultConfig.partner_name],
+        ["final_message", cfg.final_message || defaultConfig.final_message]
+      ]);
+    }
+    
+    createFloatingHearts();
+    
+    
+  </script>
+ </body>
+</html>
